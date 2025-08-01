@@ -240,7 +240,7 @@ app.use('/api/search', searchRoutes);
 app.get('/', (req, res) => {
   res.send('Welcome to the backend API');
 });
-
+app.get('/favicon.ico', (req, res) => res.status(204));
 // 404 handler
 app.use(notFound);
 
