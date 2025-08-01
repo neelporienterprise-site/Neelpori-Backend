@@ -237,6 +237,9 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin/orders', require('./routes/adminOrder'));
 app.use('/api/search', searchRoutes);
+app.get('/', (req, res) => {
+  res.send('Welcome to the backend API');
+});
 
 // 404 handler
 app.use(notFound);
