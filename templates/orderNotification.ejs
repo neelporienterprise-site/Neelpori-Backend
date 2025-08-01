@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order Notification</title>
+</head>
+<body>
+    <h2>New Order Placed!</h2>
+    <p>A new order has been placed on your store.</p>
+    <h3>Order Details:</h3>
+    <ul>
+        <% order.items.forEach(item => { %>
+            <li><strong>Product:</strong> <%= item.productId.name %> | <strong>Quantity:</strong> <%= item.quantity %> | <strong>Price:</strong> ₹<%= item.price %></li>
+        <% }) %>
+    </ul>
+    <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+    <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+    <p><strong>Order Status:</strong> <%= order.orderStatus %></p>
+    <h3>Shipping Address:</h3>
+    <p>
+        <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %>, <%= order.address.postalCode %>
+    </p>
+    <p>Make sure to process this order promptly. Thank you!</p>
+</body>
+</html>
