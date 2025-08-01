@@ -31,7 +31,7 @@ router.use(authMiddleware);
 // Create new product
 router.post('/json', 
   // createProductRateLimit,
-  checkPermission('product_create'),
+  // checkPermission('product_create'),
   uploadMiddleware.array('images', 10),
   // productValidation.create,
   productController.createProduct
@@ -39,7 +39,7 @@ router.post('/json',
 
 // Update product
 router.put('/:id', 
-  checkPermission('product_update'),
+  // checkPermission('product_update'),
   uploadMiddleware.array('images', 10),
   // productValidation.update,
   productController.updateProduct
@@ -47,7 +47,7 @@ router.put('/:id',
 
 // Delete product (soft delete)
 router.delete('/:id', 
-  checkPermission('product_delete'),
+  // checkPermission('product_delete'),
   productController.deleteProduct
 );
 

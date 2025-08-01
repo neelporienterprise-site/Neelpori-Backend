@@ -32,21 +32,21 @@ router.use(authMiddleware);
 // Create new category
 router.post('/', 
   createCategoryRateLimit,
-  checkPermission('category_create'),
+  // checkPermission('category_create'),
   uploadMiddleware.single('image'),
   categoryController.createCategory
 );
 
 // Update category
 router.put('/:id', 
-  checkPermission('category_update'),
+  // checkPermission('category_update'),
   uploadMiddleware.single('image'),
   categoryController.updateCategory
 );
 
 // Delete category (soft delete)
 router.delete('/:id', 
-  checkPermission('category_delete'),
+  // checkPermission('category_delete'),
   categoryController.deleteCategory
 );
 
