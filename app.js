@@ -120,7 +120,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = process.env.ALLOWED_ORIGINS 
       ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000', 'http://localhost:3001']; // Default for development
+      : ['http://localhost:3000', 'http://localhost:3001', 'https://www.neelpori.com', 'https://neelpori-frontend.vercel.app/'];
     
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
