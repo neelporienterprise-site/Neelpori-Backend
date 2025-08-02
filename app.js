@@ -241,6 +241,18 @@ app.get('/', (req, res) => {
   res.send('Welcome to the backend API');
 });
 app.get('/favicon.ico', (req, res) => res.status(204));
+
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV,
+    version: process.env.npm_package_version || '1.0.0'
+  });
+});
 // 404 handler
 app.use(notFound);
 

@@ -8,13 +8,16 @@ const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
 
+// Declare server variable at module level
+let server;
+
 // Database connection with retry logic
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(MONGODB_URI, {
       maxPoolSize: 10, // Maintain up to 10 socket connections
       serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivit
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
@@ -43,14 +46,22 @@ const connectDB = async () => {
 const gracefulShutdown = (signal) => {
   console.log(`\nReceived ${signal}. Starting graceful shutdown...`);
   
-  server.close(() => {
-    console.log('HTTP server closed');
-    
+  if (server) {
+    server.close(() => {
+      console.log('HTTP server closed');
+      
+      mongoose.connection.close(false, () => {
+        console.log('MongoDB connection closed');
+        process.exit(0);
+      });
+    });
+  } else {
+    // If server is not defined, just close mongoose connection
     mongoose.connection.close(false, () => {
       console.log('MongoDB connection closed');
       process.exit(0);
     });
-  });
+  }
 
   // Force close after 10 seconds
   setTimeout(() => {
@@ -90,7 +101,6 @@ if (NODE_ENV === 'production' && cluster.isMaster && process.env.ENABLE_CLUSTER 
 
 } else {
   // Single process mode or worker process
-  let server;
 
   const startServer = async () => {
     try {
