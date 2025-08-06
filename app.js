@@ -19,6 +19,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const homePageRoutes=require('./routes/homePageRoutes')
 
 // Import middleware
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
@@ -237,6 +238,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin/orders', require('./routes/adminOrder'));
 app.use('/api/search', searchRoutes);
+app.use('/api/homepage', homePageRoutes);
 app.get('/', (req, res) => {
   res.send('Welcome to the backend API');
 });
