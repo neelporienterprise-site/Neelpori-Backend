@@ -72,7 +72,7 @@ exports.deleteHeroSection = async (req, res) => {
 exports.getBestSellers = async (req, res) => {
   try {
     const bestSellers = await BestSeller.find()
-      .populate('product', 'title price images sku')
+      .populate('product')
       .sort({ position: 1 });
       
     res.json({ success: true, data: bestSellers });
@@ -125,7 +125,7 @@ exports.removeBestSeller = async (req, res) => {
 exports.getNewArrivals = async (req, res) => {
   try {
     const newArrivals = await NewArrival.find()
-      .populate('product', 'title price images sku')
+      .populate('product')
       .sort({ createdAt: -1 })
       .limit(10);
       
