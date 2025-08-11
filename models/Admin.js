@@ -38,7 +38,7 @@ const adminSchema = new mongoose.Schema({
     enum: ['products', 'orders', 'users', 'categories', 'brands', 'reviews', 'analytics', 'settings',
       'product_read', 'product_create', 'product_update', 'product_delete',
     'stock_update', 'product_bulk_update', 'product_analytics', 
-    'product_audit', 'product_export', 'product_reports', 'product_dashboard', 'orders'
+    'product_audit', 'product_export', 'product_reports', 'product_dashboard', 'orders', 'content'
     ]
   }],
   

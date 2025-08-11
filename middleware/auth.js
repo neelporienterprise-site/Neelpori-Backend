@@ -189,7 +189,10 @@ const checkPermission = (requiredPermission) => {
       
       // Analytics permissions
       'analytics_view': 'analytics',
-      'analytics_export': 'analytics'
+      'analytics_export': 'analytics',
+
+      'content_manage': 'content',
+      'product_manage': 'products',
     };
     
     const mappedPermission = permissionMap[requiredPermission];

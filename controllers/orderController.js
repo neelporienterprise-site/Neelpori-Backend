@@ -59,7 +59,7 @@ const validateCartItems = async (cartItems) => {
 const calculateShipping = async (cartItems) => {
   // Implement your shipping calculation logic here
   // For now, returning a fixed amount
-  return 0;
+  return 85;
 };
 
 /**
