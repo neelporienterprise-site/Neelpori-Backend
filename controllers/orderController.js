@@ -2,7 +2,7 @@ const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const User = require("../models/User");
-const emailService = require('../services/emailService'); 
+const emailService = require("../services/emailService");
 
 /**
  * Validate cart items before checkout
@@ -71,38 +71,39 @@ const sendOrderConfirmationEmail = async (email, order, customerName) => {
     const orderData = {
       id: order._id,
       orderNumber: order.orderNumber,
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         productId: {
-          name: item.product?.title || 'Product Name Not Available'
+            name: item.product?.title || item.product?.name || 'Product Name Not Available'
         },
         quantity: item.quantity,
         price: item.price,
-        total: (item.price * item.quantity).toFixed(2)
+        total: (item.price * item.quantity).toFixed(2),
       })),
       totalAmount: order.total.toFixed(2),
-      paymentStatus: order.payment?.status || 'pending',
+      paymentStatus: order.payment?.status || "pending",
       orderStatus: order.status,
       address: {
         street: order.shippingAddress.street,
         city: order.shippingAddress.city,
         state: order.shippingAddress.state,
-        postalCode: order.shippingAddress.pincode
+        postalCode: order.shippingAddress.pincode,
       },
       customerName: customerName,
-      subtotal: order.subtotal?.toFixed(2) || '0.00',
-      shipping: order.shipping?.cost?.toFixed(2) || '0.00',
+      subtotal: order.subtotal?.toFixed(2) || "0.00",
+      shipping: order.shipping?.cost?.toFixed(2) || "0.00",
       createdAt: order.createdAt,
-      paymentMethod: order.payment?.method || 'N/A'
+      paymentMethod: order.payment?.method || "N/A",
     };
 
     // Use your existing email service
     await emailService.sendOrderConfirmation(email, orderData);
-    
-    console.log(`Order confirmation email sent successfully to ${email} for order ${order._id}`);
+
+    console.log(
+      `Order confirmation email sent successfully to ${email} for order ${order._id}`
+    );
     return true;
-    
   } catch (error) {
-    console.error('Error sending order confirmation email:', error);
+    console.error("Error sending order confirmation email:", error);
     throw error;
   }
 };
@@ -110,48 +111,58 @@ const sendOrderConfirmationEmail = async (email, order, customerName) => {
 /**
  * Send order cancellation email
  */
-const sendOrderCancellationEmail = async (email, order, customerName, cancellationReason) => {
+const sendOrderCancellationEmail = async (
+  email,
+  order,
+  customerName,
+  cancellationReason
+) => {
   try {
     // Transform the order data for cancellation email
     const orderData = {
       id: order._id,
       orderNumber: order.orderNumber,
-      items: order.items.map(item => ({
+      items: order.items.map((item) => ({
         productId: {
-          name: item.product?.title || 'Product Name Not Available'
+          name: item.product?.title || "Product Name Not Available",
         },
         quantity: item.quantity,
         price: item.price,
-        total: (item.price * item.quantity).toFixed(2)
+        total: (item.price * item.quantity).toFixed(2),
       })),
       totalAmount: order.total.toFixed(2),
-      paymentStatus: order.payment?.status || 'pending',
+      paymentStatus: order.payment?.status || "pending",
       orderStatus: order.status,
       address: {
         street: order.shippingAddress.street,
         city: order.shippingAddress.city,
         state: order.shippingAddress.state,
-        postalCode: order.shippingAddress.pincode
+        postalCode: order.shippingAddress.pincode,
       },
       customerName: customerName,
-      subtotal: order.subtotal?.toFixed(2) || '0.00',
-      shipping: order.shipping?.cost?.toFixed(2) || '0.00',
+      subtotal: order.subtotal?.toFixed(2) || "0.00",
+      shipping: order.shipping?.cost?.toFixed(2) || "0.00",
       createdAt: order.createdAt,
       cancelledAt: order.cancelledAt,
-      paymentMethod: order.payment?.method || 'N/A',
-      cancellationReason: cancellationReason || 'No reason provided',
-      refundStatus: order.payment?.status === 'refunded' ? 'Refund processed' : 
-                   order.payment?.method === 'cod' ? 'No payment to refund' : 'Refund will be processed within 3-5 business days'
+      paymentMethod: order.payment?.method || "N/A",
+      cancellationReason: cancellationReason || "No reason provided",
+      refundStatus:
+        order.payment?.status === "refunded"
+          ? "Refund processed"
+          : order.payment?.method === "cod"
+          ? "No payment to refund"
+          : "Refund will be processed within 3-5 business days",
     };
 
     // Use your existing email service (you'll need to add this method)
     await emailService.sendOrderCancellation(email, orderData);
-    
-    console.log(`Order cancellation email sent successfully to ${email} for order ${order._id}`);
+
+    console.log(
+      `Order cancellation email sent successfully to ${email} for order ${order._id}`
+    );
     return true;
-    
   } catch (error) {
-    console.error('Error sending order cancellation email:', error);
+    console.error("Error sending order cancellation email:", error);
     throw error;
   }
 };
@@ -259,7 +270,7 @@ exports.createOrder = async (req, res) => {
 
     // Save order
     await order.save();
-
+    await order.populate("items.product", "title name images price");
     // Update product stock
     for (const item of cart.items) {
       await Product.findByIdAndUpdate(item.product._id, {
@@ -284,7 +295,7 @@ exports.createOrder = async (req, res) => {
     // Populate order for response
     const populatedOrder = await Order.findById(order._id).populate(
       "items.product",
-      "title images price"
+      "title name images price"
     );
 
     res.status(201).json({
@@ -363,15 +374,15 @@ exports.getOrderDetails = async (req, res) => {
     });
   } catch (error) {
     console.error("Get order details error:", error);
-    
+
     // Handle MongoDB cast error specifically
-    if (error.name === 'CastError') {
+    if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
         message: "Invalid order ID",
       });
     }
-    
+
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -386,7 +397,7 @@ exports.getOrderDetails = async (req, res) => {
 exports.cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    
+
     // Safely extract reason from req.body with default value
     const reason = req.body && req.body.reason ? req.body.reason : null;
 
@@ -421,6 +432,7 @@ exports.cancelOrder = async (req, res) => {
     }
 
     await order.save();
+    await order.populate("items.product", "title name images price");
 
     // Restore product stock
     for (const item of order.items) {
@@ -454,15 +466,15 @@ exports.cancelOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Cancel order error:", error);
-    
+
     // Handle MongoDB cast error specifically
-    if (error.name === 'CastError') {
+    if (error.name === "CastError") {
       return res.status(400).json({
         success: false,
         message: "Invalid order ID",
       });
     }
-    
+
     res.status(500).json({
       success: false,
       message: "Server Error",
@@ -470,7 +482,3 @@ exports.cancelOrder = async (req, res) => {
     });
   }
 };
-
-/**
- * Update order status (Admin function)
- */
