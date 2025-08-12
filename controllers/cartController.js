@@ -10,23 +10,23 @@ exports.getCart = async (req, res) => {
       .populate('items.product', 'title price images slug')
       .lean();
 
-    if (!cart) {
-      return res.status(200).json({
-        success: true,
-        data: {
-          items: [],
-          totalItems: 0,
-          subtotal: 0,
-          shipping: 0,
-          total: 0,
-          currency: 'INR'
-        }
-      });
-    }
+    // if (!cart) {
+    //   return res.status(200).json({
+    //     success: true,
+    //     data: {
+    //       items: [],
+    //       totalItems: 0,
+    //       subtotal: 0,
+    //       shipping: 0,
+    //       total: 0,
+    //       currency: 'INR'
+    //     }
+    //   });
+    // }
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = await calculateShipping(cart.items);
+    const shipping =85;
     const total = subtotal + shipping;
 
     res.status(200).json({
@@ -131,7 +131,7 @@ exports.addToCart = async (req, res) => {
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = await calculateShipping(cart.items);
+    const shipping = 85; // changed this
     const total = subtotal + shipping;
 
     res.status(200).json({
@@ -200,7 +200,7 @@ exports.updateCartItem = async (req, res) => {
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = await calculateShipping(cart.items);
+    const shipping = 85;
     const total = subtotal + shipping;
 
     res.status(200).json({
@@ -251,7 +251,7 @@ exports.removeFromCart = async (req, res) => {
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = await calculateShipping(cart.items);
+    const shipping = 85;
     const total = subtotal + shipping;
 
     res.status(200).json({
