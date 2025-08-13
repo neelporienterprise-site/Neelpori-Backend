@@ -17,11 +17,11 @@ const productSchema = new mongoose.Schema(
     },
 
     category: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Category',
-  required: [true, 'Product category is required'],
-  index: true
-  },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "Product category is required"],
+      index: true,
+    },
 
     description: {
       type: String,
@@ -74,7 +74,7 @@ const productSchema = new mongoose.Schema(
     //     index: true
     //   }],
 
-    brand:{
+    brand: {
       type: String,
     },
     price: {
@@ -478,20 +478,40 @@ productSchema.methods.addAuditLog = function (
   });
 };
 
-
-productSchema.index({ 'price.selling': 1 });
+productSchema.index({ "price.selling": 1 });
 productSchema.index({ category: 1 });
 productSchema.index({ brand: 1 });
 productSchema.index({ status: 1, visibility: 1 });
 productSchema.index({ isFeatured: 1 });
 productSchema.index({ isTrending: 1 });
-productSchema.index({ 'ratings.average': -1 });
-productSchema.index({ 'stock.quantity': 1 });
+productSchema.index({ "ratings.average": -1 });
+productSchema.index({ "stock.quantity": 1 });
 productSchema.index({ createdAt: -1 });
 
 // Compound indexes for common queries
 productSchema.index({ status: 1, visibility: 1, category: 1 });
 productSchema.index({ status: 1, visibility: 1, isFeatured: 1 });
-productSchema.index({ status: 1, visibility: 1, 'price.selling': 1 });
+productSchema.index({ status: 1, visibility: 1, "price.selling": 1 });
+
+// Create text index for search functionality
+productSchema.index(
+  {
+    title: "text",
+    description: "text",
+    shortDescription: "text",
+    brand: "text",
+    "seo.keywords": "text",
+  },
+  {
+    name: "product_search_text_index",
+    weights: {
+      title: 10,
+      brand: 5,
+      description: 3,
+      shortDescription: 2,
+      "seo.keywords": 1,
+    },
+  }
+);
 
 module.exports = mongoose.model("Product", productSchema);
